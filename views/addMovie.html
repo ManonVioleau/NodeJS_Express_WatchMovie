@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Movies</title>
+    <link rel="shortcut icon" href="./assets/icons/movie_white_24dp.svg" type="image/x-icon">
+    <link rel="stylesheet" href="./assets/style/style.css">
+    <!-- <link rel="shortcut icon" href="../public/assets/icons/movie_white_24dp.svg" type="image/x-icon">
+    <link rel="stylesheet" href="../public/assets/style/style.css"> -->
+    <script src="https://kit.fontawesome.com/b0ef7a8aa5.js" crossorigin="anonymous"></script>
+    <!-- <script src="/assets/script/script.js"></script> -->
+
+</head>
+
+<body>
+    <header>
+        <a class="logo" href="/">
+            <i class="fas fa-film"></i>
+            <h1>WatchMovies</h1>
+        </a>
+        <a class="login" href='/login'>
+            <i class="fas fa-user-circle"></i>
+        </a>
+    </header>
+    <div class="addmovie">
+        <input type="text" name="title" id="title" placeholder="Movie title" required>
+        <select name="genre" id="genre">
+        </select>
+        <select name="producer" id="producer">
+        </select>
+        <input type="text" name="date" id="date" placeholder="Release date yyyy-mm-jj" required>
+        <input type="text" name="duration" id="duration" placeholder="Duration in minutes" required>
+        <textarea name="summary" id="summary" cols="30" rows="10" placeholder="Summary ..." required></textarea>
+        <button onclick="addMovie()">Add movie</button>
+    </div>
+</body>
+
+<script>
+    async function getProducers() {
+        let response = await fetch(`http://localhost:8000/api/admin/movies/getProducers`);
+        let producers = await response.json();
+        let divs = `<option>Producer</option>`;
+        producers.forEach(producer => {
+            div = `<option value="${producer.id}">${producer.name}</option>`;
+            divs += div;
+        });
+        document.querySelector('#producer').innerHTML = divs;
+    };
+
+    async function getGenres() {
+        let response = await fetch(`http://localhost:8000/api/admin/movies/getGenres`);
+        let genres = await response.json();
+        let divs = `<option>Genre</option>`;
+        genres.forEach(genre => {
+            div = `<option value="${genre.id}">${genre.name}</option>`;
+            divs += div;
+        });
+        document.querySelector('#genre').innerHTML = divs;
+
+    };
+    (getProducers)();
+    (getGenres)();
+
+    async function addMovie() {
+        let title = document.querySelector('#title').value;
+        let duration = document.querySelector('#duration').value;
+        let genre_id = document.querySelector('#genre').value;
+        let date = document.querySelector('#date').value;
+        let producer_id = document.querySelector('#producer').value;
+        let summary = document.querySelector('#summary').value;
+        let movie = await fetch(`http://localhost:8000/api/admin/movies/addmovie/${title}/${duration}/${genre_id}/${date}/${producer_id}/${summary}`, {
+            method: 'POST',
+        });
+        window.location.href = "http://localhost:8000/admin?message=add";
+        // }
+        // function alertadd() {
+        //     window.alert('Movie added');
+        // }
+        // (redirect)();
+        // (alertadd)();
+    }
+</script>
+
+</html>
